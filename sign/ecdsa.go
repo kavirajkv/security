@@ -18,6 +18,7 @@ import (
 	"crypto/ed25519"
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 )
 
 // To generate key value pairs using ed25519
@@ -57,6 +58,11 @@ func Verifysign(publickey string, digest string, sign string) (bool,error) {
 	//convert strings to byte array
 	public_key,err := hex.DecodeString(publickey)
 	if err!=nil{
+		return false,err
+	}
+
+	if len(public_key)<32 || len(public_key)>32{
+		err:=errors.New("Wrong key size")
 		return false,err
 	}
 
