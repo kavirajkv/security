@@ -35,24 +35,41 @@ func GenerateKeypair() (string, string, error) {
 }
 
 // To create digital signature
-func Digitalsign(privatekey string, digest string) string {
+func Digitalsign(privatekey string, digest string) (string,error) {
 	//converting string arguments to byte array
-	key, _ := hex.DecodeString(privatekey)
-	message_digest, _ := hex.DecodeString(digest)
+	key, err := hex.DecodeString(privatekey)
+	if err!=nil{
+		return "",err
+	}
+	message_digest, err:= hex.DecodeString(digest)
+	if err!=nil{
+		return "",err
+	}
 
 	digisign := ed25519.Sign(key, message_digest)
 	digitalsign := hex.EncodeToString(digisign) //converting digital sign to string
 
-	return digitalsign
+	return digitalsign,nil
 }
 
 // Verify digital signature
-func Verifysign(publickey string, digest string, sign string) bool {
+func Verifysign(publickey string, digest string, sign string) (bool,error) {
 	//convert strings to byte array
-	public_key, _ := hex.DecodeString(publickey)
-	message_digest, _ := hex.DecodeString(digest)
-	digitalsign, _ := hex.DecodeString(sign)
+	public_key,err := hex.DecodeString(publickey)
+	if err!=nil{
+		return false,err
+	}
+
+	message_digest, err:= hex.DecodeString(digest)
+	if err!=nil{
+		return false,err
+	}
+
+	digitalsign, err := hex.DecodeString(sign)
+	if err!=nil{
+		return false,err
+	}
 
 	verify := ed25519.Verify(public_key, message_digest, digitalsign)
-	return verify
+	return verify,nil
 }
